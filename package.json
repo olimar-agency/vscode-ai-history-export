@@ -1,0 +1,113 @@
+{
+  "name": "ai-history-export",
+  "displayName": "AI History Export",
+  "description": "Exports AI chat sessions to a HISTORY folder as Markdown files. Supports Claude Code and Copilot.",
+  "version": "0.1.0",
+  "publisher": "olimar-agency",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0",
+    "node": ">=18.0.0"
+  },
+  "categories": ["Other"],
+  "keywords": ["history", "claude", "copilot", "chat", "transcript", "markdown", "ai", "export"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/olimar-agency/vscode-ai-history-export"
+  },
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "aiHistory.enable",
+        "title": "AI History Export: Enable for Workspace"
+      },
+      {
+        "command": "aiHistory.disable",
+        "title": "AI History Export: Disable for Workspace"
+      },
+      {
+        "command": "aiHistory.openHistory",
+        "title": "AI History Export: Open HISTORY Folder"
+      },
+      {
+        "command": "aiHistory.repair",
+        "title": "AI History Export: Repair Configuration"
+      },
+      {
+        "command": "aiHistory.validate",
+        "title": "AI History Export: Validate Installation"
+      }
+    ],
+    "configuration": {
+      "title": "AI History Export",
+      "properties": {
+        "aiHistoryExport.provider": {
+          "type": "string",
+          "default": "auto",
+          "enum": ["auto", "claude-code", "copilot"],
+          "enumDescriptions": [
+            "Auto-detect the active AI provider",
+            "Claude Code — hooks via .claude/settings.json",
+            "GitHub Copilot — manual export via command"
+          ],
+          "description": "AI provider to configure for history export."
+        },
+        "aiHistoryExport.hookScope": {
+          "type": "string",
+          "default": "project",
+          "enum": ["project", "user"],
+          "enumDescriptions": [
+            "Write hook to <workspace>/.claude/settings.json",
+            "Write hook to ~/.claude/settings.json"
+          ],
+          "description": "Whether to install the hook at project or user level (hook-based providers only)."
+        },
+        "aiHistoryExport.historyFolderName": {
+          "type": "string",
+          "default": "HISTORY",
+          "description": "Folder name where Markdown chat exports are stored."
+        },
+        "aiHistoryExport.includeDiagnostics": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include diagnostics and raw fallback sections in generated history files."
+        },
+        "aiHistoryExport.overwriteSessionFile": {
+          "type": "boolean",
+          "default": true,
+          "description": "Update the existing Markdown file for the same session instead of creating duplicates."
+        },
+        "aiHistoryExport.diagnosticsVerbose": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable verbose diagnostic logging from the extension."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --platform=node --target=node18",
+    "watch": "npm run compile -- --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext ts",
+    "test": "node ./dist/test/runTests.js",
+    "package": "npm run compile && vsce package --no-dependencies",
+    "publish:vsce": "vsce publish --no-dependencies",
+    "publish:ovsx": "ovsx publish"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "@vscode/vsce": "^2.0.0",
+    "esbuild": "^0.20.0",
+    "eslint": "^8.0.0",
+    "ovsx": "^0.9.0",
+    "typescript": "^5.0.0"
+  }
+}
