@@ -146,3 +146,4 @@ vite.config.ts.timestamp-*
 HISTORY/
 .claude/
 .github/hooks/export-history.json
+HISTORY/

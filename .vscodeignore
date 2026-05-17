@@ -2,6 +2,9 @@
 src/**
 node_modules/**
 tsconfig.json
+vitest.config.ts
 .eslintrc.json
 *.map
+*.vsix
 .github/**
+HISTORY/**
