@@ -1,6 +1,6 @@
 export type ProviderId = 'claude-code' | 'copilot' | 'cursor' | 'continue' | 'windsurf';
 
-export type HookScope = 'workspace' | 'user';
+export type HookScope = 'project' | 'user';
 
 export interface ValidationReport {
   ok: boolean;

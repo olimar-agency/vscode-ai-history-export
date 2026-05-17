@@ -5,6 +5,9 @@ import { IProvider, HookScope, ProviderId, ValidationReport } from './IProvider'
 
 const INSTALLED_BY = 'ai-history-export';
 
+type HookEntry = { matcher: string; hooks: { type: string; command: string; timeout: number; _installedBy?: string }[] };
+type ClaudeSettings = { hooks?: { Stop?: HookEntry[] } } & Record<string, unknown>;
+
 export class ClaudeCodeProvider implements IProvider {
   id: ProviderId = 'claude-code';
   displayName = 'Claude Code';
@@ -28,7 +31,7 @@ export class ClaudeCodeProvider implements IProvider {
     const configPath = this.resolveConfigPath(scope, workspaceRoot);
     if (!fs.existsSync(configPath)) return false;
     try {
-      const settings = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+      const settings = this._readSettings(configPath);
       return this._findOurEntry(settings) !== null;
     } catch {
       return false;
@@ -42,10 +45,7 @@ export class ClaudeCodeProvider implements IProvider {
     if (!settings.hooks) settings.hooks = {};
     if (!Array.isArray(settings.hooks.Stop)) settings.hooks.Stop = [];
 
-    // Remove any existing entry owned by this extension
-    settings.hooks.Stop = (settings.hooks.Stop as object[]).filter(
-      (entry: object) => !this._isOurEntry(entry)
-    );
+    settings.hooks.Stop = settings.hooks.Stop.filter((entry) => !this._isOurEntry(entry));
 
     const envPrefix = Object.entries(envVars)
       .map(([k, v]) => `${k}="${v}"`)
@@ -56,14 +56,7 @@ export class ClaudeCodeProvider implements IProvider {
 
     settings.hooks.Stop.push({
       matcher: '',
-      hooks: [
-        {
-          type: 'command',
-          command,
-          timeout: 60,
-          _installedBy: INSTALLED_BY,
-        },
-      ],
+      hooks: [{ type: 'command', command, timeout: 60, _installedBy: INSTALLED_BY }],
     });
 
     this._writeSettings(configPath, settings);
@@ -76,11 +69,9 @@ export class ClaudeCodeProvider implements IProvider {
     const settings = this._readSettings(configPath);
     if (!settings.hooks?.Stop) return;
 
-    settings.hooks.Stop = (settings.hooks.Stop as object[]).filter(
-      (entry: object) => !this._isOurEntry(entry)
-    );
+    settings.hooks.Stop = settings.hooks.Stop.filter((entry) => !this._isOurEntry(entry));
 
-    if ((settings.hooks.Stop as object[]).length === 0) delete settings.hooks.Stop;
+    if (settings.hooks.Stop.length === 0) delete settings.hooks.Stop;
     if (Object.keys(settings.hooks).length === 0) delete settings.hooks;
 
     this._writeSettings(configPath, settings);
@@ -94,7 +85,7 @@ export class ClaudeCodeProvider implements IProvider {
       issues.push(`Settings file not found: ${configPath}`);
     } else {
       try {
-        const settings = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+        const settings = this._readSettings(configPath);
         if (!this._findOurEntry(settings)) {
           issues.push('Hook entry not found in settings file. Run "Enable for Workspace" to install.');
         }
@@ -110,38 +101,29 @@ export class ClaudeCodeProvider implements IProvider {
     return { ok: issues.length === 0, issues };
   }
 
-  private _readSettings(configPath: string): Record<string, unknown> {
+  private _readSettings(configPath: string): ClaudeSettings {
     if (!fs.existsSync(configPath)) return {};
     try {
-      return JSON.parse(fs.readFileSync(configPath, 'utf8'));
+      return JSON.parse(fs.readFileSync(configPath, 'utf8')) as ClaudeSettings;
     } catch {
       return {};
     }
   }
 
-  private _writeSettings(configPath: string, settings: Record<string, unknown>): void {
+  private _writeSettings(configPath: string, settings: ClaudeSettings): void {
     const dir = path.dirname(configPath);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 
-    // Atomic write via temp file
     const tmp = `${configPath}.tmp.${Date.now()}`;
     fs.writeFileSync(tmp, JSON.stringify(settings, null, 2), 'utf8');
     fs.renameSync(tmp, configPath);
   }
 
-  private _isOurEntry(entry: object): boolean {
-    const e = entry as Record<string, unknown>;
-    if (Array.isArray(e.hooks)) {
-      return (e.hooks as Record<string, unknown>[]).some(
-        (h) => h._installedBy === INSTALLED_BY
-      );
-    }
-    return false;
+  private _isOurEntry(entry: HookEntry): boolean {
+    return entry.hooks?.some((h) => h._installedBy === INSTALLED_BY) ?? false;
   }
 
-  private _findOurEntry(settings: Record<string, unknown>): object | null {
-    const stop = (settings.hooks as Record<string, unknown[]> | undefined)?.Stop;
-    if (!Array.isArray(stop)) return null;
-    return stop.find((entry) => this._isOurEntry(entry as object)) ?? null;
+  private _findOurEntry(settings: ClaudeSettings): HookEntry | undefined {
+    return settings.hooks?.Stop?.find((entry) => this._isOurEntry(entry));
   }
 }
