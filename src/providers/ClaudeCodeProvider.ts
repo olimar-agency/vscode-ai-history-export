@@ -38,7 +38,7 @@ export class ClaudeCodeProvider implements IProvider {
     }
   }
 
-  install(workspaceRoot: string, scope: HookScope, scriptAbsPath: string, envVars: Record<string, string>): void {
+  install(workspaceRoot: string, scope: HookScope, scriptAbsPath: string, envVars: Record<string, string>, nodeExecutable = 'node'): void {
     const configPath = this.resolveConfigPath(scope, workspaceRoot);
     const settings = this._readSettings(configPath);
 
@@ -50,9 +50,10 @@ export class ClaudeCodeProvider implements IProvider {
     const envPrefix = Object.entries(envVars)
       .map(([k, v]) => `${k}="${v}"`)
       .join(' ');
+    const nodeCmd = nodeExecutable.includes(' ') ? `"${nodeExecutable}"` : nodeExecutable;
     const command = envPrefix
-      ? `${envPrefix} node "${scriptAbsPath}"`
-      : `node "${scriptAbsPath}"`;
+      ? `${envPrefix} ${nodeCmd} "${scriptAbsPath}"`
+      : `${nodeCmd} "${scriptAbsPath}"`;
 
     settings.hooks.Stop.push({
       matcher: '',

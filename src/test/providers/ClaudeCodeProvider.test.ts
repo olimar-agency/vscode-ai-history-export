@@ -117,6 +117,25 @@ describe('EN-06b: env vars are injected into the command string', () => {
   });
 });
 
+describe('EN: custom nodeExecutable is used in the command string', () => {
+  it('uses the provided node path instead of "node"', () => {
+    provider.install(tmpDir, 'project', SCRIPT_PATH, {}, '/usr/local/bin/node20');
+
+    const s = readSettings() as { hooks: { Stop: { hooks: { command: string }[] }[] } };
+    const cmd = s.hooks.Stop[0].hooks[0].command;
+    expect(cmd).toContain('/usr/local/bin/node20');
+    expect(cmd).not.toMatch(/^node /);
+  });
+
+  it('quotes node executable path that contains spaces', () => {
+    provider.install(tmpDir, 'project', SCRIPT_PATH, {}, '/path with spaces/node');
+
+    const s = readSettings() as { hooks: { Stop: { hooks: { command: string }[] }[] } };
+    const cmd = s.hooks.Stop[0].hooks[0].command;
+    expect(cmd).toContain('"/path with spaces/node"');
+  });
+});
+
 // ── DI: Disable ───────────────────────────────────────────────────────────────
 
 describe('DI-01: uninstall removes our hook', () => {

@@ -25,7 +25,7 @@ export class CopilotProvider implements IProvider {
     return true; // Manual export is always "installed" — no config to write
   }
 
-  install(_workspaceRoot: string, _scope: HookScope, _scriptAbsPath: string, _envVars: Record<string, string>): void {
+  install(_workspaceRoot: string, _scope: HookScope, _scriptAbsPath: string, _envVars: Record<string, string>, _nodeExecutable?: string): void {
     // No-op: Copilot has no hook mechanism. Export is triggered manually.
   }
 

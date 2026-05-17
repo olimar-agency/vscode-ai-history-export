@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { resolveActiveProvider } from '../providers/registry';
 import { resolveScriptPath, assertScriptExists } from '../hook/ScriptResolver';
 import { ensureHistoryFolder, offerGitignore } from '../workspace/HistoryFolder';
-import { getHookScope, getExporterEnvVars, getWorkspaceRoot } from '../workspace/SettingsBridge';
+import { getHookScope, getExporterEnvVars, getNodeExecutable, getWorkspaceRoot } from '../workspace/SettingsBridge';
 
 export async function enable(context: vscode.ExtensionContext): Promise<void> {
   const workspaceRoot = getWorkspaceRoot();
@@ -17,8 +17,9 @@ export async function enable(context: vscode.ExtensionContext): Promise<void> {
   const provider = await resolveActiveProvider(workspaceRoot);
   const scope = getHookScope();
   const envVars = getExporterEnvVars();
+  const nodeExecutable = getNodeExecutable();
 
-  provider.install(workspaceRoot, scope, scriptPath, envVars);
+  provider.install(workspaceRoot, scope, scriptPath, envVars, nodeExecutable);
   ensureHistoryFolder(workspaceRoot);
   await offerGitignore(workspaceRoot);
 

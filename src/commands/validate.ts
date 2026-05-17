@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as cp from 'child_process';
 import { resolveActiveProvider } from '../providers/registry';
 import { resolveScriptPath } from '../hook/ScriptResolver';
-import { getHookScope, getWorkspaceRoot } from '../workspace/SettingsBridge';
+import { getHookScope, getNodeExecutable, getWorkspaceRoot } from '../workspace/SettingsBridge';
 
 export async function validate(context: vscode.ExtensionContext): Promise<void> {
   const workspaceRoot = getWorkspaceRoot();
@@ -16,11 +16,15 @@ export async function validate(context: vscode.ExtensionContext): Promise<void> 
   output.appendLine('--- AI History Export: Validation ---\n');
 
   // Check Node.js
+  const nodeExecutable = getNodeExecutable();
   try {
-    const nodeVersion = cp.execSync('node --version', { encoding: 'utf8' }).trim();
-    output.appendLine(`✓ Node.js: ${nodeVersion}`);
+    const nodeVersion = cp.execSync(`"${nodeExecutable}" --version`, { encoding: 'utf8' }).trim();
+    output.appendLine(`✓ Node.js (${nodeExecutable}): ${nodeVersion}`);
   } catch {
-    output.appendLine('✗ Node.js not found on PATH. Install Node.js 18+ to use this extension.');
+    output.appendLine(
+      `✗ Node.js not found at "${nodeExecutable}". ` +
+      `Install Node.js 18+ or set aiHistoryExport.nodePath to the full path of your node executable.`
+    );
   }
 
   // Check exporter script

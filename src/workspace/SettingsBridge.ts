@@ -14,6 +14,11 @@ export function getExporterEnvVars(): Record<string, string> {
   };
 }
 
+export function getNodeExecutable(): string {
+  const config = vscode.workspace.getConfiguration('aiHistoryExport');
+  return config.get<string>('nodePath', '').trim() || 'node';
+}
+
 export function getWorkspaceRoot(): string | undefined {
   return vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
 }

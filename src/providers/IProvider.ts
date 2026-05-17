@@ -15,7 +15,7 @@ export interface IProvider {
   detect(workspaceRoot: string): Promise<boolean>;
   resolveConfigPath(scope: HookScope, workspaceRoot: string): string;
   isInstalled(workspaceRoot: string, scope: HookScope): boolean;
-  install(workspaceRoot: string, scope: HookScope, scriptAbsPath: string, envVars: Record<string, string>): void;
+  install(workspaceRoot: string, scope: HookScope, scriptAbsPath: string, envVars: Record<string, string>, nodeExecutable?: string): void;
   uninstall(workspaceRoot: string, scope: HookScope): void;
   validate(workspaceRoot: string, scope: HookScope, scriptAbsPath: string): ValidationReport;
 }

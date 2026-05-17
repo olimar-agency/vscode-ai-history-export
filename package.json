@@ -99,6 +99,11 @@
           "default": true,
           "description": "Update the existing Markdown file for the same session instead of creating duplicates."
         },
+        "aiHistoryExport.nodePath": {
+          "type": "string",
+          "default": "",
+          "description": "Absolute path to the node executable used to run the exporter script. Leave empty to use 'node' from PATH."
+        },
         "aiHistoryExport.diagnosticsVerbose": {
           "type": "boolean",
           "default": false,
