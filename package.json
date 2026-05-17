@@ -112,7 +112,6 @@
     "watch": "npm run compile -- --watch",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext ts",
-    "test": "node ./dist/test/runTests.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "package": "npm run compile && vsce package --no-dependencies",
@@ -120,7 +119,7 @@
     "publish:ovsx": "ovsx publish"
   },
   "devDependencies": {
-    "@types/node": "^18.0.0",
+    "@types/node": "^22.19.19",
     "@types/vscode": "^1.85.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
