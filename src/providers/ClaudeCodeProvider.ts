@@ -32,7 +32,7 @@ export class ClaudeCodeProvider implements IProvider {
     if (!fs.existsSync(configPath)) return false;
     try {
       const settings = this._readSettings(configPath);
-      return this._findOurEntry(settings) !== null;
+      return this._findOurEntry(settings) !== undefined;
     } catch {
       return false;
     }

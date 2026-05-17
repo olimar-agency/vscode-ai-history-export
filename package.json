@@ -9,8 +9,19 @@
     "vscode": "^1.85.0",
     "node": ">=18.0.0"
   },
-  "categories": ["Other"],
-  "keywords": ["history", "claude", "copilot", "chat", "transcript", "markdown", "ai", "export"],
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "history",
+    "claude",
+    "copilot",
+    "chat",
+    "transcript",
+    "markdown",
+    "ai",
+    "export"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/olimar-agency/vscode-ai-history-export"
@@ -48,7 +59,11 @@
         "aiHistoryExport.provider": {
           "type": "string",
           "default": "auto",
-          "enum": ["auto", "claude-code", "copilot"],
+          "enum": [
+            "auto",
+            "claude-code",
+            "copilot"
+          ],
           "enumDescriptions": [
             "Auto-detect the active AI provider",
             "Claude Code — hooks via .claude/settings.json",
@@ -59,7 +74,10 @@
         "aiHistoryExport.hookScope": {
           "type": "string",
           "default": "project",
-          "enum": ["project", "user"],
+          "enum": [
+            "project",
+            "user"
+          ],
           "enumDescriptions": [
             "Write hook to <workspace>/.claude/settings.json",
             "Write hook to ~/.claude/settings.json"
@@ -95,6 +113,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext ts",
     "test": "node ./dist/test/runTests.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "package": "npm run compile && vsce package --no-dependencies",
     "publish:vsce": "vsce publish --no-dependencies",
     "publish:ovsx": "ovsx publish"
@@ -108,6 +128,7 @@
     "esbuild": "^0.20.0",
     "eslint": "^8.0.0",
     "ovsx": "^0.9.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vitest": "^4.1.6"
   }
 }
