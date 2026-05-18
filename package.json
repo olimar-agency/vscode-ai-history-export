@@ -2,8 +2,9 @@
   "name": "ai-history-export",
   "displayName": "AI History Export",
   "description": "Exports AI chat sessions to a HISTORY folder as Markdown files. Supports Claude Code and Copilot.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "OlimarAgency",
+  "icon": "images/icon.png",
   "license": "MIT",
   "engines": {
     "vscode": "^1.85.0",
