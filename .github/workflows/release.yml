@@ -19,11 +19,11 @@ jobs:
       - run: npm run lint
       - run: npm run package
       - name: Publish to VS Code Marketplace
-        run: ./node_modules/.bin/vsce publish --no-dependencies
+        run: ./node_modules/.bin/vsce publish --no-dependencies --pat "$VSCE_PAT"
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
       - name: Publish to Open VSX
-        run: ./node_modules/.bin/ovsx publish
+        run: ./node_modules/.bin/ovsx publish --pat "$OVSX_PAT"
         env:
           OVSX_PAT: ${{ secrets.OVSX_PAT }}
       - name: Create GitHub Release
