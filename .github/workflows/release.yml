@@ -27,6 +27,7 @@ jobs:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
       - name: Publish to Open VSX
         run: ./node_modules/.bin/ovsx publish --pat "$OVSX_PAT"
+        continue-on-error: true
         env:
           OVSX_PAT: ${{ secrets.OVSX_PAT }}
       - name: Create GitHub Release
